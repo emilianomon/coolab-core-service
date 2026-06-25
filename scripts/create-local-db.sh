@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DATABASE_NAME="${DATABASE_NAME:-coolab_core_service}"
+DATABASE_URL="${POSTGRES_ADMIN_URL:-postgres://postgres:postgres@localhost:5432/postgres}"
+
+psql "$DATABASE_URL" -tc "SELECT 1 FROM pg_database WHERE datname = '$DATABASE_NAME'" | grep -q 1 \
+  || psql "$DATABASE_URL" -c "CREATE DATABASE $DATABASE_NAME"
