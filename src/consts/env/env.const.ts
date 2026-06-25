@@ -3,7 +3,8 @@ import { z } from 'zod';
 export const env = z.object({
   AUTH_ENCRYPTION_PRIVATE_KEY: z.string().min(16),
   DATABASE_CONNECTION_STRING: z.url(),
-  DATABASE_READ_CONNECTION_STRING: z.url().optional().or(z.literal('')),
+  DATABASE_READ_CONNECTION_STRING_1: z.url().optional().or(z.literal('')),
+  DATABASE_READ_CONNECTION_STRING_2: z.url().optional().or(z.literal('')),
   HTTP_PORT: z.string().refine(value => Number.parseInt(value, 10) > 0, {
     message: 'HTTP_PORT must be a positive integer.',
   }),

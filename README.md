@@ -56,6 +56,8 @@ The server runs on `HTTP_PORT`, defaulting to `8080` in `.env.example`.
 
 See `.env.example` for required values.
 
+Read replica connection strings can be left empty for local development. When `DATABASE_READ_CONNECTION_STRING_1` or `DATABASE_READ_CONNECTION_STRING_2` are configured, read queries use a load-aware pool selection algorithm while writes and transactions continue to use `DATABASE_CONNECTION_STRING`.
+
 ## First Endpoint
 
 `GET /platform/v1/users/me`
