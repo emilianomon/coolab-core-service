@@ -1,0 +1,14 @@
+.DS_Store
+.env
+.env.production
+.git
+.github
+.pnpm-store
+coverage
+dist
+fly.io
+logs
+node_modules
+npm-debug.log*
+pnpm-debug.log*
+tmp

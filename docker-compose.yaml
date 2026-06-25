@@ -1,19 +1,19 @@
+version: '3.3'
+
 services:
-  postgres:
-    image: postgres:17-alpine
-    environment:
-      POSTGRES_DB: coolab_core_service
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
+  coolab-core-service:
+    container_name: coolab-core-service
+    image: coolab-core-service
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      no_cache: true
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - 8080:8080
+    networks:
+      - network_app
+    restart: unless-stopped
 
-  redis:
-    image: redis:8-alpine
-    ports:
-      - "6379:6379"
-
-volumes:
-  postgres-data:
+networks:
+  network_app:
+    driver: bridge

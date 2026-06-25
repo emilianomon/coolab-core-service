@@ -1,0 +1,49 @@
+app = "stg-coolab-core-service"
+primary_region = "iad"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "512mb"
+
+[build]
+  dockerfile = "../../Dockerfile"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+  processes = ["app"]
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  max_machines_running = 1
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [services.concurrency]
+    type = "connections"
+    soft_limit = 1
+    hard_limit = 1000
+
+  [[services.http_checks]]
+    interval = "5s"
+    grace_period = "10s"
+    method = "get"
+    path = "/health"
+    protocol = "http"
+    timeout = "10s"
+
+[[restart]]
+  policy = "on-failure"
+  retries = 10
+  processes = ["app"]
+
+[env]
+  HTTP_PORT = 8080
+  NODE_ENV = "development"

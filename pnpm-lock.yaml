@@ -17,9 +17,6 @@ importers:
       '@hono/zod-openapi':
         specifier: 1.3.0
         version: 1.3.0(hono@4.12.14)(zod@4.3.6)
-      coolab-core-service:
-        specifier: 'link:'
-        version: 'link:'
       hono:
         specifier: 4.12.14
         version: 4.12.14
