@@ -22,6 +22,7 @@ const selectable = () => helpers().table().entity().extend({
 }) satisfies z.ZodType<Selectable>;
 
 const insertable = () => helpers().table().insertable(selectable()).omit({
+  email: true,
   emailStatus: true,
   lastAuthenticationAt: true,
 });
@@ -29,6 +30,8 @@ const insertable = () => helpers().table().insertable(selectable()).omit({
 const updatable = () => helpers().table().updatable(selectable())
   .omit({
     email: true,
+    emailStatus: true,
+    lastAuthenticationAt: true,
   })
   .partial();
 
