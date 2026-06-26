@@ -1,7 +1,7 @@
 import { NotFoundException } from '@self/exceptions';
 import { UsersRepository } from '@self/repositories';
 
-export const retrieveCurrentUsersApplication = async ({ id }: { id: string }) => {
+export const retrieveUsersApplication = async ({ id }: { id: string }) => {
 
   const user = await UsersRepository.selectById(id)
     .selectAll()

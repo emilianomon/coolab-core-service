@@ -1,5 +1,5 @@
 import { app } from '@self/app';
-import { retrieveCurrentUsersApplication } from '@self/application';
+import { retrieveUsersApplication } from '@self/application';
 import { PlatformContext } from '@self/contexts';
 import { routing } from '@self/utils';
 import { validation } from '@self/validation';
@@ -61,11 +61,11 @@ const handler = app.openapi(routing().route({
 }), async c => {
 
   const user = PlatformContext.getUser();
-  const result = await retrieveCurrentUsersApplication({
+  const result = await retrieveUsersApplication({
     id: user.id,
   });
 
   return c.json(result, 200);
 });
 
-export { handler as retrieveCurrentUsersPlatformHandler };
+export { handler as retrieveUsersPlatformHandler };
