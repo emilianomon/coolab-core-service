@@ -4,7 +4,7 @@
   "editor.insertSpaces": true,
   "editor.wordWrapColumn": 120,
   "editor.wordWrap": "bounded",
-  "typescript.native-preview.tsdk": "/Users/emilianooliveira/Repositories/zaia-sovereign-service-2/node_modules/@typescript/native-preview",
+  "typescript.native-preview.tsdk": "/Users/emilianooliveira/Repositories/coolab-core-service/node_modules/@typescript/native-preview",
   "editor.formatOnSave": false,
   "typescript.experimental.useTsgo": true,
   "[javascript]": {
