@@ -47,22 +47,10 @@ class PlatformContext extends HttpClientContext<Properties> {
         });
       }
 
-      if(!authorization.startsWith('Bearer ')) {
-        throw new UnauthorizedException({
-          feedback: {
-            enUs: 'The authentication header is invalid.',
-            esEs: 'El encabezado de autenticación no es válido.',
-            ptBr: 'O cabeçalho de autenticação é inválido.',
-          },
-          message: 'Invalid authorization header.',
-        });
-      }
-
-      const token = authorization.slice('Bearer '.length).trim();
       let decrypted: ReturnType<typeof PlatformEncryption.decryptAccessToken>;
 
       try {
-        decrypted = PlatformEncryption.decryptAccessToken(token);
+        decrypted = PlatformEncryption.decryptAccessToken(authorization);
       } catch {
         throw new UnauthorizedException({
           feedback: {
