@@ -15,7 +15,6 @@ Backend service foundation for Coolab. The first vertical slice is platform user
 | Database | PostgreSQL + Kysely |
 | Cache | Redis |
 | Logging | Winston |
-| Tests | Vitest |
 | Lint | ESLint flat config |
 
 ## Architecture
@@ -54,7 +53,6 @@ Docker Compose only builds and starts the application container. It does not def
 | `pnpm run lint` | Run ESLint |
 | `pnpm run ts` | Run TypeScript typecheck |
 | `pnpm run start:docker` | Start the app container through Docker Compose |
-| `pnpm test` | Run Vitest tests when test files exist |
 | `pnpm run check` | Run lint and typecheck |
 | `pnpm db:migrate:up` | Apply pending SQL migrations |
 | `pnpm db:migrate:down` | Roll back the latest SQL migration |
@@ -71,6 +69,11 @@ Fly runtime secrets must be configured outside the repository:
 
 ```text
 AUTH_ENCRYPTION_PRIVATE_KEY
+AWS_ACCESS_KEY_ID
+AWS_ENDPOINT_URL_S3
+AWS_REGION
+AWS_SECRET_ACCESS_KEY
+BUCKET_NAME
 DATABASE_CONNECTION_STRING
 DATABASE_READ_CONNECTION_STRING_1
 DATABASE_READ_CONNECTION_STRING_2

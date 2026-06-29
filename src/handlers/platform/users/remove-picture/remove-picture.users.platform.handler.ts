@@ -1,14 +1,25 @@
 import { app } from '@self/app';
-import { retrieveUsersApplication } from '@self/application';
+import { removePictureUsersApplication } from '@self/application';
 import { PlatformContext } from '@self/contexts';
 import { RoutingUtil } from '@self/utils';
 import { validation } from '@self/validation';
 
+const userResponse = validation().tables().users().selectable().pick({
+  createdAt: true,
+  email: true,
+  emailStatus: true,
+  id: true,
+  lastAuthenticationAt: true,
+  name: true,
+  picture: true,
+  updatedAt: true,
+});
+
 const handler = app.openapi(RoutingUtil.route({
-  description: 'Retrieves the authenticated platform user.',
-  method: 'get',
+  description: 'Removes the authenticated platform user picture.',
+  method: 'delete',
   middleware: PlatformContext.middleware(),
-  path: RoutingUtil.path('/platform/v1/users/{id}'),
+  path: RoutingUtil.path('/platform/v1/users/{id}/picture'),
   request: {
     params: validation().object({
       id: validation().literal('me'),
@@ -18,19 +29,10 @@ const handler = app.openapi(RoutingUtil.route({
     200: {
       content: {
         'application/json': {
-          schema: validation().tables().users().selectable().pick({
-            createdAt: true,
-            email: true,
-            emailStatus: true,
-            id: true,
-            lastAuthenticationAt: true,
-            name: true,
-            picture: true,
-            updatedAt: true,
-          }),
+          schema: userResponse,
         },
       },
-      description: 'The authenticated user.',
+      description: 'The updated authenticated user.',
     },
     401: {
       content: {
@@ -59,13 +61,13 @@ const handler = app.openapi(RoutingUtil.route({
   },
   tags: ['Users'],
 }), async c => {
-
   const user = PlatformContext.getUser();
-  const result = await retrieveUsersApplication({
+
+  const result = await removePictureUsersApplication({
     id: user.id,
   });
 
   return c.json(result, 200);
 });
 
-export { handler as retrieveUsersPlatformHandler };
+export { handler as removePictureUsersPlatformHandler };

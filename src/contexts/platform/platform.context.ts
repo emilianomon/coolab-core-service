@@ -4,6 +4,7 @@ import { PlatformEncryption } from '@self/encryptions';
 import { NotFoundException, UnauthorizedException } from '@self/exceptions';
 import { MemoizationMemory } from '@self/memories';
 import { UsersRepository } from '@self/repositories';
+import { UsersService } from '@self/services';
 import { MiddlewareHandler } from 'hono';
 
 import { LoggingContext } from '../logging';
@@ -124,19 +125,12 @@ class PlatformContext extends HttpClientContext<Properties> {
         },
       });
 
+      const mappedUser = await UsersService.ensurePictureUrl(user);
+
       return this.init({
         properties: {
           ...baseProperties,
-          user: {
-            createdAt: user.createdAt,
-            email: user.email,
-            emailStatus: user.emailStatus,
-            id: user.id,
-            lastAuthenticationAt,
-            name: user.name,
-            picture: user.picture,
-            updatedAt: user.updatedAt,
-          },
+          user: mappedUser,
         },
         traceId: LoggingContext.get().traceId,
       }, next);

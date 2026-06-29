@@ -1,14 +1,14 @@
 import { app } from '@self/app';
 import { updateUsersApplication } from '@self/application';
 import { PlatformContext } from '@self/contexts';
-import { routing } from '@self/utils';
+import { RoutingUtil } from '@self/utils';
 import { validation } from '@self/validation';
 
-const handler = app.openapi(routing().route({
+const handler = app.openapi(RoutingUtil.route({
   description: 'Updates the authenticated platform user.',
   method: 'patch',
   middleware: PlatformContext.middleware(),
-  path: routing().path('/platform/v1/users/{id}'),
+  path: RoutingUtil.path('/platform/v1/users/{id}'),
   request: {
     body: {
       content: {

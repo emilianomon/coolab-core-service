@@ -1,5 +1,6 @@
 import { NotFoundException } from '@self/exceptions';
 import { UsersRepository } from '@self/repositories';
+import { UsersService } from '@self/services';
 
 export const retrieveUsersApplication = async ({ id }: { id: string }) => {
 
@@ -18,5 +19,7 @@ export const retrieveUsersApplication = async ({ id }: { id: string }) => {
     });
   }
 
-  return user;
+  const mapped = await UsersService.ensurePictureUrl(user);
+
+  return mapped;
 };

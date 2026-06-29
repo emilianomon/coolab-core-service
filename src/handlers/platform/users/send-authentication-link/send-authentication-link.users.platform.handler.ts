@@ -1,12 +1,12 @@
 import { app } from '@self/app';
 import { sendAuthenticationLinkUsersApplication } from '@self/application';
-import { routing } from '@self/utils';
+import { RoutingUtil } from '@self/utils';
 import { validation } from '@self/validation';
 
-const handler = app.openapi(routing().route({
+const handler = app.openapi(RoutingUtil.route({
   description: 'Sends an authentication link to a user.',
   method: 'post',
-  path: routing().path('/platform/v1/users/send-authentication-link'),
+  path: RoutingUtil.path('/platform/v1/users/send-authentication-link'),
   request: {
     body: {
       content: {

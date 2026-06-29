@@ -1,12 +1,12 @@
 import { app } from '@self/app';
 import { authenticateUsersApplication } from '@self/application';
-import { routing } from '@self/utils';
+import { RoutingUtil } from '@self/utils';
 import { validation } from '@self/validation';
 
-const handler = app.openapi(routing().route({
+const handler = app.openapi(RoutingUtil.route({
   description: 'Authenticates a user from an authentication token.',
   method: 'post',
-  path: routing().path('/platform/v1/users/authenticate'),
+  path: RoutingUtil.path('/platform/v1/users/authenticate'),
   request: {
     body: {
       content: {

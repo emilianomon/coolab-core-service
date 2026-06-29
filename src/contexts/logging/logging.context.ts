@@ -1,5 +1,5 @@
 import { Context } from '@self/abstractions/context';
-import { data } from '@self/utils';
+import { DataUtil } from '@self/utils';
 import { MiddlewareHandler } from 'hono';
 
 type Properties = object;
@@ -55,7 +55,7 @@ class LoggingContext extends Context<Properties> {
         message: `[${c.req.method.toUpperCase()}] [${c.res.status}] ${c.req.path} [${elapsed}ms]`,
         meta: {
           ...(c.error ? {
-            error: data().stringifyError(c.error),
+            error: DataUtil.stringifyError(c.error),
           } : {}),
           body: redactedBody,
           headers,

@@ -1,6 +1,6 @@
 import { Memory, MemoryKey } from '@self/abstractions';
 import { BadImplementationException } from '@self/exceptions';
-import { autoparser } from '@self/utils';
+import { AutoparserUtil } from '@self/utils';
 
 class MemoizationMemory extends Memory {
   public async memo<TReturn>(params: {
@@ -12,7 +12,7 @@ class MemoizationMemory extends Memory {
 
     if(cachedResult) {
       const parsed = JSON.parse(cachedResult) as TReturn;
-      return autoparser().dates(parsed);
+      return AutoparserUtil.dates(parsed);
     }
 
     const result = await params.callback();

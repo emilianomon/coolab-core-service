@@ -7,6 +7,7 @@ import { exception } from './exception';
 import { helpers } from './helpers';
 import { id } from './id';
 import { language } from './language';
+import { picture } from './picture';
 import { tables } from './tables';
 
 export const validation = () => ({
@@ -18,5 +19,6 @@ export const validation = () => ({
   helpers,
   id,
   language,
+  picture,
   tables,
 });

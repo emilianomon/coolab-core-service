@@ -15,7 +15,6 @@
 
 - `pnpm run lint`
 - `pnpm run ts`
-- `pnpm test`
 - `pnpm db:migrate:up`
 - `pnpm db:migrate:down`
 

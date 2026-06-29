@@ -1,9 +1,15 @@
 import { serializeError } from 'serialize-error';
 
-const stringifyError = (error: unknown) => {
-  return JSON.stringify(serializeError(error));
-};
+class DataUtil {
+  public static errorToObject(error: unknown) {
+    const parsed = serializeError(error);
+    return parsed;
+  }
 
-export const data = () => ({
-  stringifyError,
-});
+  public static stringifyError(error: unknown) {
+    const parsed = JSON.stringify(DataUtil.errorToObject(error));
+    return parsed;
+  }
+}
+
+export { DataUtil };

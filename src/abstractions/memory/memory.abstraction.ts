@@ -1,6 +1,6 @@
 import { env } from '@self/consts';
 import { UnknownException } from '@self/exceptions';
-import { logging } from '@self/utils';
+import { LoggingUtil } from '@self/utils';
 import { createClient, RedisClientType } from 'redis';
 
 const keyPrefix = 'coolab' as const;
@@ -9,7 +9,7 @@ export type KeyPrefix = typeof keyPrefix;
 type UserId = string;
 
 export type MemoryKey =
-  | 'memo:*'
+  | 'memo:*' // To allow purge all.
   | `memo:user-in-platform-context:${UserId}`;
 
 export type RedisKey = `${KeyPrefix}:${MemoryKey}`;
@@ -83,7 +83,7 @@ export abstract class Memory {
       this.firstErrorAt = Date.now();
     }
 
-    logging().error(`Redis memory error: ${JSON.stringify(error)}`);
+    LoggingUtil.error(`Redis memory error: ${JSON.stringify(error)}`);
 
     if(Date.now() - this.firstErrorAt >= 60_000) {
       throw new UnknownException({
@@ -99,7 +99,7 @@ export abstract class Memory {
 
   private onClientReady() {
     if(this.firstErrorAt) {
-      logging().info('Redis connection reestablished.');
+      LoggingUtil.info('Redis connection reestablished.');
     }
 
     this.firstErrorAt = null;

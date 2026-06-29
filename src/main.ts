@@ -3,7 +3,7 @@ import '@self/handlers';
 import { serve } from '@hono/node-server';
 import { app } from '@self/app';
 import { env } from '@self/consts';
-import { data, logging } from '@self/utils';
+import { DataUtil, LoggingUtil } from '@self/utils';
 
 const handlerTimeoutMs = 30 * 60 * 1000;
 
@@ -15,14 +15,14 @@ serve({
     requestTimeout: handlerTimeoutMs,
   },
 }, info => {
-  logging().info(`Server is running on http://localhost:${info.port}`);
+  LoggingUtil.info(`Server is running on http://localhost:${info.port}`);
 });
 
 process.on('uncaughtException', error => {
-  logging().error(`Uncaught exception: ${data().stringifyError(error)}`);
+  LoggingUtil.error(`Uncaught exception: ${DataUtil.stringifyError(error)}`);
   process.exit(1);
 });
 
 process.on('unhandledRejection', error => {
-  logging().error(`Unhandled rejection: ${data().stringifyError(error)}`);
+  LoggingUtil.error(`Unhandled rejection: ${DataUtil.stringifyError(error)}`);
 });

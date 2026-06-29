@@ -1,7 +1,9 @@
 import crypto from 'node:crypto';
 
-const uuid = () => crypto.randomUUID();
+class RandomizeUtil {
+  public static uuid() {
+    return crypto.randomUUID();
+  }
+}
 
-export const randomize = () => ({
-  uuid,
-});
+export { RandomizeUtil };

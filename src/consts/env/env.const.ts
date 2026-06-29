@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const env = z.object({
   AUTH_ENCRYPTION_PRIVATE_KEY: z.string().min(16),
+  BUCKET_NAME: z.string(),
   DATABASE_CONNECTION_STRING: z.url(),
   DATABASE_READ_CONNECTION_STRING_1: z.url().optional().or(z.literal('')),
   DATABASE_READ_CONNECTION_STRING_2: z.url().optional().or(z.literal('')),

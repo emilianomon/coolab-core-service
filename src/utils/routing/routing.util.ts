@@ -9,19 +9,21 @@ type Action = string;
 type Path =
   | `/${Client}/${Version}/${Resource}`
   | `/${Client}/${Version}/${Resource}/${Param}`
+  | `/${Client}/${Version}/${Resource}/${Param}/${Action}`
   | `/${Client}/${Version}/${Resource}/${Action}`;
 
-const path = <T extends Path>(value: T): T => value;
-
-const route: typeof createRoute = config => {
-  if(config.request?.body) {
-    config.request.body.required = true;
+class RoutingUtil {
+  public static path<T extends Path>(value: T): T {
+    return value;
   }
 
-  return createRoute(config);
-};
+  public static route: typeof createRoute = config => {
+    if(config.request?.body) {
+      config.request.body.required = true;
+    }
 
-export const routing = () => ({
-  path,
-  route,
-});
+    return createRoute(config);
+  };
+}
+
+export { RoutingUtil };

@@ -1,8 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 
 import { UnknownException } from '@self/exceptions';
-import { randomize } from '@self/utils';
-import { logging } from '@self/utils/logging';
+import { LoggingUtil, RandomizeUtil } from '@self/utils';
 
 export type ContextManager<TProperties> = {
   properties: TProperties;
@@ -26,7 +25,7 @@ export abstract class Context<TProperties> {
     return this.manager.run({
       properties: params.properties,
       start: new Date(),
-      traceId: params.traceId ?? randomize().uuid(),
+      traceId: params.traceId ?? RandomizeUtil.uuid(),
     }, callback);
   }
 
@@ -50,7 +49,7 @@ export abstract class Context<TProperties> {
   public log(params: {
     level: 'error' | 'info' | 'warn';
     message: string;
-    meta?: Parameters<ReturnType<typeof logging>['info']>[1];
+    meta?: Parameters<typeof LoggingUtil.info>[1];
   }) {
     const context = this.get();
     const meta = {
@@ -60,13 +59,13 @@ export abstract class Context<TProperties> {
 
     switch(params.level) {
       case 'error':
-        logging().error(params.message, meta);
+        LoggingUtil.error(params.message, meta);
         break;
       case 'info':
-        logging().info(params.message, meta);
+        LoggingUtil.info(params.message, meta);
         break;
       case 'warn':
-        logging().warn(params.message, meta);
+        LoggingUtil.warn(params.message, meta);
         break;
     }
   }

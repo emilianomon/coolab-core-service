@@ -1,6 +1,7 @@
 import { NotFoundException } from '@self/exceptions';
 import { MemoizationMemory } from '@self/memories';
 import { UsersRepository } from '@self/repositories';
+import { UsersService } from '@self/services';
 
 type Params = {
   id: string;
@@ -29,5 +30,7 @@ export const updateUsersApplication = async (params: Params) => {
 
   await MemoizationMemory.purge(`memo:user-in-platform-context:${id}`);
 
-  return user;
+  const mapped = await UsersService.ensurePictureUrl(user);
+
+  return mapped;
 };

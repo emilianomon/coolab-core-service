@@ -1,15 +1,35 @@
 import { app } from '@self/app';
-import { retrieveUsersApplication } from '@self/application';
+import { updatePictureUsersApplication } from '@self/application';
 import { PlatformContext } from '@self/contexts';
 import { RoutingUtil } from '@self/utils';
 import { validation } from '@self/validation';
 
+const userResponse = validation().tables().users().selectable().pick({
+  createdAt: true,
+  email: true,
+  emailStatus: true,
+  id: true,
+  lastAuthenticationAt: true,
+  name: true,
+  picture: true,
+  updatedAt: true,
+});
+
 const handler = app.openapi(RoutingUtil.route({
-  description: 'Retrieves the authenticated platform user.',
-  method: 'get',
+  description: 'Updates the authenticated platform user picture.',
+  method: 'patch',
   middleware: PlatformContext.middleware(),
-  path: RoutingUtil.path('/platform/v1/users/{id}'),
+  path: RoutingUtil.path('/platform/v1/users/{id}/picture'),
   request: {
+    body: {
+      content: {
+        'multipart/form-data': {
+          schema: validation().object({
+            picture: validation().picture(),
+          }).strict(),
+        },
+      },
+    },
     params: validation().object({
       id: validation().literal('me'),
     }),
@@ -18,19 +38,18 @@ const handler = app.openapi(RoutingUtil.route({
     200: {
       content: {
         'application/json': {
-          schema: validation().tables().users().selectable().pick({
-            createdAt: true,
-            email: true,
-            emailStatus: true,
-            id: true,
-            lastAuthenticationAt: true,
-            name: true,
-            picture: true,
-            updatedAt: true,
-          }),
+          schema: userResponse,
         },
       },
-      description: 'The authenticated user.',
+      description: 'The updated authenticated user.',
+    },
+    400: {
+      content: {
+        'application/json': {
+          schema: validation().exception(),
+        },
+      },
+      description: 'The request is invalid.',
     },
     401: {
       content: {
@@ -59,13 +78,15 @@ const handler = app.openapi(RoutingUtil.route({
   },
   tags: ['Users'],
 }), async c => {
-
   const user = PlatformContext.getUser();
-  const result = await retrieveUsersApplication({
+  const body = await c.req.valid('form');
+
+  const result = await updatePictureUsersApplication({
     id: user.id,
+    picture: body.picture,
   });
 
   return c.json(result, 200);
 });
 
-export { handler as retrieveUsersPlatformHandler };
+export { handler as updatePictureUsersPlatformHandler };
