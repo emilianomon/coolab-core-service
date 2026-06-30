@@ -10,7 +10,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { env } from '@self/consts';
 import { BadRequestException } from '@self/exceptions';
 
-type Folder = 'user-pictures';
+type Folder = 'user-pictures' | 'workspace-pictures';
 type Extension = 'png';
 type UUID = string;
 

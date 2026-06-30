@@ -7,10 +7,12 @@ const keyPrefix = 'coolab' as const;
 export type KeyPrefix = typeof keyPrefix;
 
 type UserId = string;
+type WorkspaceId = string;
 
 export type MemoryKey =
   | 'memo:*' // To allow purge all.
-  | `memo:user-in-platform-context:${UserId}`;
+  | `memo:user-in-platform-context:${UserId}`
+  | `memo:user-workspace-in-platform-context:${UserId}:${WorkspaceId}`;
 
 export type RedisKey = `${KeyPrefix}:${MemoryKey}`;
 

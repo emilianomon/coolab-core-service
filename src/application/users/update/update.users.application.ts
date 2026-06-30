@@ -1,4 +1,5 @@
 import { NotFoundException } from '@self/exceptions';
+import { MemoizationMemory } from '@self/memories';
 import { UsersRepository } from '@self/repositories';
 import { UsersService } from '@self/services';
 
@@ -37,10 +38,6 @@ export const updateUsersApplication = async (params: Params) => {
     picture = null;
   }
 
-  if(receivedPicture !== undefined && user.picture) {
-    await UsersService.deletePicture(user.picture);
-  }
-
   const toUpdate = {
     ...rest,
     ...(receivedPicture !== undefined ? { picture } : {}),
@@ -62,7 +59,11 @@ export const updateUsersApplication = async (params: Params) => {
     });
   }
 
-  await UsersService.purgeUserMemo(id);
+  if(receivedPicture !== undefined && user.picture) {
+    await UsersService.deletePicture(user.picture);
+  }
+
+  await MemoizationMemory.purge(`memo:user-in-platform-context:${id}`);
 
   const mapped = await UsersService.ensurePictureUrl(result);
 

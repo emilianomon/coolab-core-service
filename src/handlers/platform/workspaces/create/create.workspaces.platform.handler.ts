@@ -13,7 +13,11 @@ const handler = app.openapi(RoutingUtil.route({
     body: {
       content: {
         'application/json': {
-          schema: validation().tables().workspaces().insertable(),
+          schema: validation().tables().workspaces().insertable().omit({
+            picture: true,
+          }).extend({
+            picture: validation().picture().nullable().optional(),
+          }),
         },
       },
     },
@@ -59,6 +63,7 @@ const handler = app.openapi(RoutingUtil.route({
 
   const result = await createWorkspacesApplication({
     name: body.name,
+    picture: body.picture,
     userId: user.id,
   });
 

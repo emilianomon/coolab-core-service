@@ -1,10 +1,16 @@
 import { HttpClientContext } from '@self/abstractions';
-import { env } from '@self/consts';
+import { env, platformWorkspacePermissions } from '@self/consts';
 import { PlatformEncryption } from '@self/encryptions';
-import { NotFoundException, UnauthorizedException } from '@self/exceptions';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@self/exceptions';
 import { MemoizationMemory } from '@self/memories';
-import { UsersRepository } from '@self/repositories';
-import { UsersService } from '@self/services';
+import { UsersRepository, WorkspacesRepository } from '@self/repositories';
+import { UsersService, WorkspacesService } from '@self/services';
+import { validation } from '@self/validation';
 import { MiddlewareHandler } from 'hono';
 
 import { LoggingContext } from '../logging';
@@ -20,8 +26,19 @@ type User = {
   updatedAt: Date;
 };
 
+type Workspace = {
+  createdAt: Date;
+  id: string;
+  name: string;
+  permissions: (typeof platformWorkspacePermissions)[keyof typeof platformWorkspacePermissions];
+  picture: string | null;
+  role: keyof typeof platformWorkspacePermissions;
+  updatedAt: Date;
+};
+
 type Properties = {
   user: User;
+  workspace: Workspace | null;
 };
 
 const ttlSeconds = env.NODE_ENV === 'local' ? 1 : 3600;
@@ -31,6 +48,23 @@ class PlatformContext extends HttpClientContext<Properties> {
   public getUser() {
     const { properties: { user } } = this.get();
     return user;
+  }
+
+  public getWorkspace() {
+    const { properties: { workspace } } = this.get();
+
+    if(!workspace) {
+      throw new ForbiddenException({
+        feedback: {
+          enUs: 'You do not have permission to access this workspace.',
+          esEs: 'No tienes permiso para acceder a este workspace.',
+          ptBr: 'Você não tem permissão para acessar este espaço de trabalho.',
+        },
+        message: 'Forbidden workspace.',
+      });
+    }
+
+    return workspace;
   }
 
   public middleware(): MiddlewareHandler {
@@ -126,11 +160,65 @@ class PlatformContext extends HttpClientContext<Properties> {
       });
 
       const mappedUser = await UsersService.ensurePictureUrl(user);
+      const userId = decrypted.content.id;
+      const workspaceId = c.req.header('x-workspace-id') || 'null';
+      let mappedWorkspace: Workspace | null = null;
+
+      if(workspaceId !== 'null') {
+        const check = validation().id().safeParse(workspaceId);
+
+        if(!check.success) {
+          throw new BadRequestException({
+            feedback: {
+              enUs: `The workspace ID "${workspaceId}" is invalid. Please provide a valid workspace ID.`,
+              esEs: `El ID de workspace "${workspaceId}" no es válido. Por favor, proporciona un ID de workspace válido.`,
+              ptBr: `O ID do espaço de trabalho "${workspaceId}" é inválido. Por favor, forneça um ID de espaço de trabalho.`,
+            },
+            message: `Invalid workspace ID: ${workspaceId}`,
+          });
+        }
+
+        const workspace = await MemoizationMemory.memo({
+          callback: async () => {
+            return WorkspacesRepository.select()
+              .innerJoin('workspaceUsers', 'workspaces.id', 'workspaceUsers.workspaceId')
+              .where('workspaceUsers.userId', '=', userId)
+              .where('workspaceUsers.workspaceId', '=', workspaceId)
+              .selectAll('workspaces')
+              .select('workspaceUsers.role as role')
+              .executeTakeFirst();
+          },
+          key: `memo:user-workspace-in-platform-context:${userId}:${workspaceId}`,
+          ttlSeconds,
+        });
+
+        if(!workspace) {
+          throw new ForbiddenException({
+            feedback: {
+              enUs: 'You do not have permission to access this workspace.',
+              esEs: 'No tienes permiso para acceder a este workspace.',
+              ptBr: 'Você não tem permissão para acessar este espaço de trabalho.',
+            },
+            message: 'Forbidden workspace.',
+          });
+        }
+
+        mappedWorkspace = await WorkspacesService.ensurePictureUrl({
+          createdAt: workspace.createdAt,
+          id: workspace.id,
+          name: workspace.name,
+          permissions: platformWorkspacePermissions[workspace.role],
+          picture: workspace.picture,
+          role: workspace.role,
+          updatedAt: workspace.updatedAt,
+        });
+      }
 
       return this.init({
         properties: {
           ...baseProperties,
           user: mappedUser,
+          workspace: mappedWorkspace,
         },
         traceId: LoggingContext.get().traceId,
       }, next);
